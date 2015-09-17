@@ -31,9 +31,10 @@ function weatherRoute(request, response)
 	//once event recieved info
 	weatherCity.on("end", function(weatherValues){
 		//store values from return json file
+		var temperature = convertTemperature(weatherValues.main.temp);
 		var values = {
-			'temperature':weatherValues.main.temp,
-			'humidity':weatherValues.main.humidity,
+			'temperature':temperature,
+			'humidity':weatherValues.main.humidity + '%',
 			'city': request.body.city
 		}
 
@@ -51,6 +52,13 @@ function weatherRoute(request, response)
 		console.log("HeresYOURERROR:   " + error);	
 	});
 	
+}
+
+var convertTemperature = function(temperature){
+	tempNum = parseInt(temperature);
+	tempNum = (tempNum - 273.15) * 1.8 + 32.0;
+	tempNum = parseInt(tempNum); //get rid of decimal point
+	return tempNum + ' degrees ';
 }
 
   
