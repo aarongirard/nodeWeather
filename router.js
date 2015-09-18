@@ -12,6 +12,7 @@ function homeRoute(request, response)
 		renderer.view("header", {}, response);
 		renderer.view("home", {}, response);
 		renderer.view("footer", {}, response);
+		response.end();
 	}
 }
 

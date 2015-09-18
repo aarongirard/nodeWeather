@@ -1,9 +1,10 @@
 #heading{
-	padding-bottom: 100px;
+	padding-bottom: 30px;
 }
 #submit{
-	margin: 15px 0px 15px 135px;
+	margin: 15px 15px;
 }
 #weatherList{
 	list-style-type: none;
 }
+
