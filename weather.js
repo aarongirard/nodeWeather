@@ -9,61 +9,70 @@ function Weather(city){
 
     profileEmitter = this;
 
-    request('http://api.openweathermap.org/data/2.5/weather?q=' + city, function(error, response, body) {
+    request('http://api.openweathermap.org/data/2.5/weather?q=' + city +'&units=imperial', function(error, response, body) {
 	//console.log("Body: "+ body);
 	//console.log("Response: "+response);
 	//console.log(error);
-	weather = (JSON.parse(body));
+	
+
+    var weather = (JSON.parse(body));
 	//console.log(mainS.main.temp);
 
 	//console.log('------FROM WEAHTER.JS----------');
 	//console.log(weather.main.temp);
 	 profileEmitter.emit("end", weather);
-	 profileEmitter.emit("error", error);
-});
+    });
+}
 
+function weather5(city){
+    EventEmitter.call(this);
 
+    profileEmitter = this;
 
-    //hold incoming information
-    /*var body;
-    console.log('s');
-    var request = http.get("http://api.openweathermap.org/data/2.5/weather?q="+city, function(response){
-    	
-    	//error
-    	if (response.statusCode !== 200) {
-    		
-            request.abort();
-            //Status Code Error
-            profileEmitter.emit("error", new Error("There was an error getting the weather for " + city + ". (" + http.STATUS_CODES[response.statusCode] + ")"));
+    var weather;
+    request('http://api.openweathermap.org/data/2.5/forecast?q=' + city +'&units=imperial', function(error, response, body) {
+        //console.log("Body: "+ body);
+        //console.log("Response: "+response);
+        //console.log(error);
+
+        if(error === null || response.statusCode !== 200){ 
+            profileEmitter.emit("error", error); 
         }
-    
-        //Read the data
-        response.on('data', function (chunk) {
-            console.log("data");
-            body += chunk;
-            //console.log(chunk);
-            profileEmitter.emit("data", chunk);
-        });
 
-        response.on('end', function () {
-        	console.log("END");
-            if(response.statusCode === 200) {
-                try {
-                    //Parse the data
-                    console.log(body);
-                    var weather = JSON.parse(body);
-                    console.log("wealdsf: "+weather);
-                    profileEmitter.emit("end", weather);
-                } catch (error) {
-                	console.log("wealdsf: ");
-                    profileEmitter.emit("error", error);
-                }
+        weather = (JSON.parse(body));
+        
+        
+        var relevantInfo = [];
+
+        //get releveant information for a single dt
+        for (var i = 0; i < weather.list.length; i++) 
+        {   
+            var newWeather={
+                dt: '',
+                temp: '',
+                humidity:'' , 
+                description: '' 
+            };
+            
+            newWeather.dt = weather.list[i]['dt'];
+            newWeather.temp = weather.list[i]['main']['temp'];
+            newWeather.humidity = weather.list[i]['main']['humidity'];
+            newWeather.description = weather.list[i]['weather'].pop().description;
+            
+            ;add that relevenat info to object
+            relevantInfo.push(newWeather);  
+        }   
+
+        for(var i = 0; i < relevantInfo.length; i++)
+        {
+            for(var key in relevantInfo[i])
+            {
+                console.log(key + ': ' + relevantInfo[i][key]);
             }
-        }).on("error", function(error){
-            profileEmitter.emit("error", error);
-        });
-		console.log(response.statusCode + "   got status code");
-    }).on('error',function(e){"got an error: " + e });*/
+        }
+
+        profileEmitter.emit("end", weather);
+    });
 }
 
 util.inherits( Weather, EventEmitter );
