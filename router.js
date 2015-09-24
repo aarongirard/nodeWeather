@@ -6,8 +6,6 @@ function homeRoute(request, response)
 {
 	if(request.url === "/")
 	{
-		var city = 'Atlanta';
-		console.log('request received');
 		response.writeHead(200, {'Content-Type': 'text/html'});
 		renderer.view("header", {}, response);
 		renderer.view("home", {}, response);
@@ -18,10 +16,8 @@ function homeRoute(request, response)
 
 function weatherRoute(request, response)
 {
+	
 	console.log(request.body);
-	/*var city  = request.body;
-	console.log(city);
-	response.end();*/
 
 	response.writeHead(200, {'Content-Type': 'text/html'});
 	renderer.view("header", {}, response);
@@ -32,9 +28,9 @@ function weatherRoute(request, response)
 	//once event recieved info
 	weatherCity.on("end", function(weatherValues){
 		//store values from return json file
-		var temperature = convertTemperature(weatherValues.main.temp);
+		
 		var values = {
-			'temperature':temperature,
+			'temperature':weatherValues.main.temp,
 			'humidity':weatherValues.main.humidity + '%',
 			'city': request.body.city
 		}
@@ -50,23 +46,32 @@ function weatherRoute(request, response)
 		
 		response.end();
 	}).on("error", function(error){
-		console.log("HeresYOURERROR:   " + error);	
+		console.log("Heres Your Error:   " + error);	
 	});
 	
 }
 
-var convertTemperature = function(temperature){
-	tempNum = parseInt(temperature);
-	tempNum = (tempNum - 273.15) * 1.8 + 32.0;
-	tempNum = parseInt(tempNum); //get rid of decimal point
-	return tempNum + ' degrees ';
+function weatherRoute5(request, response)
+{
+	response.writeHead(200, {'Content-Type': 'text/html'});
+	renderer.view("header", {}, response);
+
+	//create event to get weather
+	var weatherCity  = new Weather5Day(request.body.city);
+
+	//once event recieved info
+	weatherCity.on("end", function(weatherValues){
+		renderer.view5Day("homeSearched5Day.html", weatherValues, response);
+		renderer.view("footer", {}, response);
+
+		response,end();
+	}).on("error", function(error)){
+		console.log("Heres Your Error:   " + error);
+	});
 }
 
-  
+
+
+module.exports.weather5 = weatherRoute5;
 module.exports.weather = weatherRoute;
 module.exports.home = homeRoute;
-
-/*
-		
-		/
-*/
