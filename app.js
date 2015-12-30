@@ -31,8 +31,7 @@ var server = app.listen(8080, function(){
 });
 
 
-var bodyParser = require('body-parser')
-var app = express()
+
 
 
 
